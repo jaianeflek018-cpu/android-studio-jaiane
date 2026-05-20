@@ -42,15 +42,6 @@ class FormCadastro : AppCompatActivity() {
         }
     }
 
-    // AQUI ESTÁ O SEGREDO: O onStart fica FORA do onCreate
-    override fun onStart() {
-        super.onStart()
-        val usuarioAtual = FirebaseAuth.getInstance().currentUser
-        if (usuarioAtual != null) {
-            irParaTelaPrincipal()
-        }
-    }
-
     private fun cadastrarUsuario(view: View) {
         val email = edit_email.text.toString().trim()
         val senha = edit_senha.text.toString().trim()
@@ -60,7 +51,7 @@ class FormCadastro : AppCompatActivity() {
                 if (task.isSuccessful) {
                     salvarDadosUsuario()
                     Snackbar.make(view, "Sucesso ao cadastrar!", Snackbar.LENGTH_LONG).show()
-                    irParaTelaPrincipal()
+                    irParaMainActivity() // Agora ela existe aqui e o erro vai sumir!
                 } else {
                     val erro = task.exception?.message
                     Snackbar.make(view, "Erro: $erro", Snackbar.LENGTH_LONG).show()
@@ -68,8 +59,9 @@ class FormCadastro : AppCompatActivity() {
             }
     }
 
-    private fun irParaTelaPrincipal() {
-        val intent = Intent(this, TelaPrincipal::class.java)
+    // AQUI ESTÁ A CORREÇÃO: Mudamos o nome da função para bater com o que você chamou lá em cima
+    private fun irParaMainActivity() {
+        val intent = Intent(this, MainActivity::class.java) // Aponta corretamente para a sua MainActivity
         startActivity(intent)
         finish()
     }
