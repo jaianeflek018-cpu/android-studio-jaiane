@@ -10,68 +10,82 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class TelaPerfil : AppCompatActivity() {
 
-    private lateinit var textNome: TextView
-    private lateinit var textEmail: TextView
-    private lateinit var btDeslogar: Button
+    // Variáveis da tela mapeadas como TextView (conforme as tags do seu XML)
+    private lateinit var mailUser: TextView
+    private lateinit var usuarioUser: TextView
+    private lateinit var bt_sair: Button
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tela_perfil)
 
-        
+        // Esconde a barra superior (Toolbar)
         supportActionBar?.hide()
 
-        // 1. Inicializa todos os componentes da tela
+        // Inicializa o banco de dados conforme o slide 3 e 10
+        db = FirebaseFirestore.getInstance()
+
+        // Inicializa as conexões com o arquivo XML
         IniciarComponentes()
 
-        // 2. Carrega o Nome e o E-mail reais do usuário logado
-        carregarDadosUsuario()
-
-        // 3. Configurando o clique para deslogar e voltar ao Login
-        btDeslogar.setOnClickListener {
-
-            // Garante que o usuário foi deslogado do Firebase ao clicar em sair
+        // Configura o clique do botão Sair exatamente como no slide 3, 9 e 10
+        bt_sair.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
 
-            // Criando a intenção de voltar para a MainActivity (que é o seu Login)
-            val intent = Intent(this, MainActivity::class.java)
+            // Cria a intenção de voltar para a tela de Login do seu projeto
+            val intent = Intent(this@TelaPerfil, FormCadastro::class.java)
             startActivity(intent)
-
-            // Muito importante: encerra a tela de perfil para não conseguir voltar no botão físico do celular
             finish()
         }
     }
 
-    private fun carregarDadosUsuario() {
-        // Pega o usuário conectado no momento
-        val usuarioAtual = FirebaseAuth.getInstance().currentUser
+    // Método onStart solicitado pelo professor nos slides 5 e 10
+    override fun onStart() {
+        super.onStart()
 
-        if (usuarioAtual != null) {
-            // Define o e-mail direto da autenticação
-            textEmail.text = usuarioAtual.email
+        // Pega o e-mail do usuário conectado no Auth
+        val userEmail = FirebaseAuth.getInstance().currentUser?.email
+        mailUser.text = userEmail
 
-            // Busca o nome salvao lá na coleção "Usuarios" do Firestore
-            val db = FirebaseFirestore.getInstance()
-            db.collection("Usuarios")
-                .whereEqualTo("uid", usuarioAtual.uid)
-                .get()
-                .addOnSuccessListener { documentos ->
-                    for (documento in documentos) {
-                        val nomeDoBanco = documento.getString("nome")
-                        textNome.text = nomeDoBanco
-                    }
-                }
-                .addOnFailureListener {
-                    textNome.text = "Erro ao carregar nome"
-                }
+        // Se o e-mail não for nulo, chama a função para buscar o nome correspondente
+        if (userEmail != null) {
+            buscarNomeDoEmail(userEmail)
         }
     }
 
-    private fun IniciarComponentes() {
-        btDeslogar = findViewById(R.id.bt_deslogar)
+    // Nossa função de busca no Firestore detalhada nos slides 6 e 10
+    fun buscarNomeDoEmail(email: String) {
+        val usuariosRef = db.collection("Usuarios")
 
-        // CORREÇÃO: Agora batendo certinho com o seu arquivo XML!
-        textNome = findViewById(R.id.textNomeUser)
-        textEmail = findViewById(R.id.textEmailUser)
+        // Cria a consulta para encontrar o documento com o e-mail correspondente
+        val query = usuariosRef.whereEqualTo("email", email)
+
+        query.get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    // O documento foi encontrado, pegamos a primeira ocorrência
+                    val documento = querySnapshot.documents[0]
+                    val nome = documento.getString("nome")
+
+                    if (nome != null) {
+                        usuarioUser.text = nome
+                    } else {
+                        println("Nome não encontrado para o e-mail $email")
+                    }
+                } else {
+                    println("Nenhum documento encontrado para o e-mail $email")
+                }
+            }
+            .addOnFailureListener { e ->
+                println("Erro ao buscar documento: ${e.message}")
+            }
+    }
+
+    // Vincula o Kotlin com os IDs reais do seu XML
+    private fun IniciarComponentes() {
+        mailUser = findViewById(R.id.textEmailUser)
+        usuarioUser = findViewById(R.id.textNomeUser)
+        bt_sair = findViewById(R.id.bt_deslogar) // ID correspondente ao seu botão "SAIR"
     }
 }
