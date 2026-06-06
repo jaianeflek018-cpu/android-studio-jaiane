@@ -7,44 +7,52 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
+    <!-- ⚠️ CORREÇÃO: layout_height="wrap_content" aqui é essencial -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="700dp"
         android:background="@drawable/background">
 
-        <!-- Imagem da Logo/Fachada -->
-        <ImageView
-            android:id="@+id/logo"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardLogo"
             android:layout_width="280dp"
             android:layout_height="227dp"
             android:layout_marginTop="40dp"
-            android:src="@drawable/fachada"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="0dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Caixa branca de fundo -->
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/fachada" />
+
+        </androidx.cardview.widget.CardView>
+
         <View
             android:id="@+id/container_components"
             style="@style/ContainerComponents"
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/logo" />
+            app:layout_constraintTop_toBottomOf="@id/cardLogo" />
 
-        <!-- Campo de E-mail -->
         <EditText
             android:id="@+id/edit_email"
             style="@style/Edit_Text"
+            android:layout_marginTop="16dp"
+            android:drawableEnd="@drawable/email"
             android:hint="E-mail"
             android:inputType="textEmailAddress"
-            android:drawableEnd="@drawable/email"
-            app:layout_constraintTop_toTopOf="@id/container_components"
-            app:layout_constraintStart_toStartOf="@id/container_components"
             app:layout_constraintEnd_toEndOf="@id/container_components"
-            android:layout_marginTop="30dp"/>
+            app:layout_constraintStart_toStartOf="@id/container_components"
+            app:layout_constraintTop_toTopOf="@id/container_components" />
 
-        <!-- Campo de Senha -->
         <EditText
             android:id="@+id/edit_senha"
             style="@style/Edit_Text"
@@ -54,10 +62,6 @@
             app:layout_constraintTop_toBottomOf="@+id/edit_email"
             app:layout_constraintStart_toStartOf="@id/container_components"
             app:layout_constraintEnd_toEndOf="@id/container_components" />
-
-        <!-- Botão Entrar -->
-
-        <!-- Link para Cadastro -->
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/bt_entrada"

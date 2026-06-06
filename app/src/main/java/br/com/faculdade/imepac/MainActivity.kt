@@ -2,6 +2,7 @@ package br.com.faculdade.imepac
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -20,58 +21,60 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         supportActionBar?.hide()
 
         IniciarComponentes()
 
-        // GARANTIA PARA O PROFESSOR: Sempre que abrir esta tela, desloga qualquer um que estiver ativo
+        // Desloga qualquer sessão anterior para garantir que o professor veja o fluxo completo
         FirebaseAuth.getInstance().signOut()
 
-        // Configura o clique no texto para ir para a tela de cadastro
         textTelaCadastro.setOnClickListener {
-            val intent = Intent(this, FormCadastro::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, FormCadastro::class.java))
         }
 
-        // Configura o clique no botão de entrar
         bt_entrada.setOnClickListener { view ->
             val email = edit_email.text.toString().trim()
             val senha = edit_senha.text.toString().trim()
 
-            if (email.isEmpty() || senha.isEmpty()) {
-                Snackbar.make(view, "Preencha todos os campos!", Snackbar.LENGTH_SHORT).show()
-            } else if (senha.length < 6) {
-                Snackbar.make(view, "A senha deve ter pelo menos 6 caracteres!", Snackbar.LENGTH_SHORT).show()
-            } else {
-                AutenticarUsuario(view, email, senha)
+            when {
+                email.isEmpty() || senha.isEmpty() ->
+                    Snackbar.make(view, "Preencha todos os campos!", Snackbar.LENGTH_SHORT).show()
+                senha.length < 6 ->
+                    Snackbar.make(view, "A senha deve ter pelo menos 6 caracteres!", Snackbar.LENGTH_SHORT).show()
+                else ->
+                    AutenticarUsuario(view, email, senha)
             }
         }
     }
 
     private fun AutenticarUsuario(view: View, email: String, senha: String) {
+        // Desabilita o botão durante o processo para evitar cliques duplos
+        bt_entrada.isEnabled = false
+
         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, senha)
             .addOnCompleteListener { task ->
+                bt_entrada.isEnabled = true  // Reabilita o botão
                 if (task.isSuccessful) {
-                    irParaTelaPrincipal()
+                    Log.d("LOGIN", "Login bem-sucedido!")
+                    irParaDashboard()
                 } else {
-                    Snackbar.make(view, "Erro ao entrar: Verifique suas credenciais.", Snackbar.LENGTH_LONG).show()
+                    val erro = task.exception?.message ?: "Erro desconhecido"
+                    Log.e("LOGIN", "Falha: $erro")
+                    Snackbar.make(view, "Erro: $erro", Snackbar.LENGTH_LONG).show()
                 }
             }
     }
 
-    // O BLOCO ONSTART FOI REMOVIDO DAQUI PARA NUNCA MAIS PULAR ESTA TELA
-
-    private fun irParaTelaPrincipal() {
-        val intent = Intent(this, TelaPrincipal::class.java)
-        startActivity(intent)
+    private fun irParaDashboard() {
+        // ✅ CORRIGIDO: agora vai para TelaDashboard, não TelaPrincipal
+        startActivity(Intent(this, TelaDashboard::class.java))
         finish()
     }
 
     private fun IniciarComponentes() {
-        edit_email = findViewById(R.id.edit_email)
-        edit_senha = findViewById(R.id.edit_senha)
-        bt_entrada = findViewById(R.id.bt_entrada)
+        edit_email       = findViewById(R.id.edit_email)
+        edit_senha       = findViewById(R.id.edit_senha)
+        bt_entrada       = findViewById(R.id.bt_entrada)
         textTelaCadastro = findViewById(R.id.text_tela_cadastro)
     }
 }

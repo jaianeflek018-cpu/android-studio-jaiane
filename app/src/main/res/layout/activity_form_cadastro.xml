@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:text="Cadastre-se"
         android:textSize="40sp"
-        android:textColor="@color/white"
+        android:textColor="@color/azul_imepac2"
         android:textStyle="bold"
         android:layout_marginTop="60dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,8 @@
         android:layout_marginTop="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_cadastro" />
+        app:layout_constraintTop_toBottomOf="@+id/title_cadastro"
+        />
 
     <!-- Campo Nome -->
 

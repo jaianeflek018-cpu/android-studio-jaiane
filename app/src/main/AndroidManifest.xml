@@ -6,34 +6,35 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="EstagioControl"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Imepac"
         android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true">
 
-        <activity
-            android:name=".TelaPrincipal"
-            android:exported="false" />
-
-        <activity
-            android:name=".TelaPerfil"
-            android:exported="false" />
-
-        <activity
-            android:name=".FormCadastro"
-            android:exported="false" />
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
+        <!-- Tela 2: Login (LAUNCHER) -->
+        <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-    </application>
+        <!-- Tela 1: Cadastro -->
+        <activity android:name=".FormCadastro"     android:exported="false" />
+        <!-- Tela 3: Perfil -->
+        <activity android:name=".TelaPerfil"       android:exported="false" />
+        <!-- Tela 4: Dashboard -->
+        <activity android:name=".TelaDashboard"    android:exported="false" />
+        <!-- Tela 5: Lançar Horas -->
+        <activity android:name=".TelaLancarHoras"  android:exported="false" />
+        <!-- Tela 6: Histórico -->
+        <activity android:name=".TelaHistorico"    android:exported="false" />
+        <!-- Tela 7: Consultar -->
+        <activity android:name=".TelaConsultar"    android:exported="false" />
+        <!-- Tela 8: Editar -->
+        <activity android:name=".TelaEditar"       android:exported="false" />
 
+    </application>
 </manifest>
